@@ -1,12 +1,75 @@
+//TODO can’t click multiple buttons at once
 <!DOCTYPE html>
 <html>
 <head>
-<title>Page Title</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
 </head>
-<body>
+<body onload="startGame()">
+<script>
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+function startGame() {
+    myGameArea.start();
+    objects = [new component(100, 100, "teal", 0, 0)];
+    objects[0].speedX = 0.001;
+}
+function tick() {
+  myGameArea.clear();
+  if(myGameArea.key == "w"){
+  	objects[0].speedY = -2;
+  }
+  if(myGameArea.key == "s"){
+  	objects[0].speedY = 2;
+  }if(myGameArea.key == "a"){
+  	objects[0].speedX = -2;
+  }if(myGameArea.key == "d"){
+  	objects[0].speedX = 2;
+  }
+  objects.forEach(function updateObj(obj){obj.update()});
+}
 
+function component(w, h, color, x, y){
+	this.w = w;
+    this.h = h;
+    this.x = x;
+    this.y = y;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.update = function(){
+    	this.x += this.speedX;
+        this.y += this.speedY;
+    	ctx = myGameArea.context;
+		ctx.fillStyle = color;
+		ctx.fillRect(this.x, this.y, this.w, this.h);
+    }
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+      	window.addEventListener('keydown', function (e) {
+          myGameArea.key = e.key;
+      	})
+      	window.addEventListener('keyup', function (e) {
+          myGameArea.key = false;
+      	})
+        this.canvas.width = 480;
+        this.canvas.height = 360;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.interval = setInterval(tick, 20);
+    },
+    clear : function(){
+    	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+</script>
 </body>
 </html>
+
